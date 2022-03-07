@@ -21,6 +21,10 @@ def train(trains_list, train_number)
   trains_list[trains_list.index(train_number)]
 end
 
+def add_train_on_station(current_train)
+  current_train.current_station.add_train(current_train)
+end
+
 stations = [Station.new('Москва'), Station.new('Воронеж'), Station.new('Тула')] 
 test_route_first = Route.new(route_name(stations[0], stations[2]), stations[0], stations[2])
 test_route_second = Route.new(route_name(stations[2], stations[0]), stations[2], stations[0])
@@ -28,12 +32,12 @@ trains_list = [PassengerTrain.new(12345), CargoTrain.new(54321)]
 routes = [test_route_first, test_route_second]
 
 loop do
-  puts "Введите 1, чтобы создать станцию. \n
-        Введите 2, чтобы создать поезд. \n
-        Введите 3, чтобы создать маршрут и управлять станциями в нем. \n
-        Введите 4, чтобы назначить маршрут поезду. \n
-        Введите 5, чтобы прицепить или отцепить вагоны от поезда. \n
-        Введите 6, чтобы перемещать поезд по маршруту. \n
+  puts "Введите 1, чтобы создать станцию.\n
+        Введите 2, чтобы создать поезд.\n
+        Введите 3, чтобы создать маршрут и управлять станциями в нем.\n
+        Введите 4, чтобы назначить маршрут поезду.\n
+        Введите 5, чтобы прицепить или отцепить вагоны от поезда.\n
+        Введите 6, чтобы перемещать поезд по маршруту.\n
         Введите 7, чтобы просматривать список станций и список поездов на станции.
         Введите 8, чтобы выйти из программы. "
   choice = gets.chomp.to_i
@@ -48,8 +52,8 @@ loop do
   when 2
     puts "Введите номер поезда: "
     train_number = gets.chomp.to_i
-    puts "Введите 1, чтобы создать пассажирский поезд \n
-          Введите 2 чтобы создать грузовой поезд. \n
+    puts "Введите 1, чтобы создать пассажирский поезд.\n
+          Введите 2 чтобы создать грузовой поезд.\n
           Введите 3, чтобы вернуться обратно. "
     choice_type_train = gets.chomp.to_i
     case choice_type_train
@@ -62,10 +66,10 @@ loop do
     end
 
   when 3
-    puts "Введите 1, чтобы создать маршрут. \n
-          Введите 2, чтобы просмотреть список станций маршрута. \n
-          Введите 3, чтобы добавить станцию. \n
-          Введите 4, чтобы удалить станцию. \n
+    puts "Введите 1, чтобы создать маршрут.\n
+          Введите 2, чтобы просмотреть список станций маршрута.\n
+          Введите 3, чтобы добавить станцию.\n
+          Введите 4, чтобы удалить станцию.\n
           Введите 5, чтобы вернуться обратно."
     choice_route = gets.chomp.to_i
     case choice_route
@@ -102,7 +106,7 @@ loop do
     end
 
   when 4
-    puts "Введите 1, чтобы добавить маршрут. \n
+    puts "Введите 1, чтобы добавить маршрут.\n
           Введите 2, чтобы вернуться обратно. "
     choice_type_train = gets.chomp.to_i
     case choice_type_train
@@ -117,8 +121,8 @@ loop do
 
   when 5
     current_train = train(trains_list, train_number, routes)
-    puts "Введите 1, чтобы добавить вагон. \n
-          Введите 2, чтобы отцепить вагон. \n
+    puts "Введите 1, чтобы добавить вагон.\n
+          Введите 2, чтобы отцепить вагон.\n
           Введите 3, чтобы вернуться обратно."
     select_action_with_wagon = gets.chomp.to_i
     case select_action_with_wagon
@@ -126,8 +130,8 @@ loop do
       current_train.attach_wagons(PassengerWagon.new) if current_train.type == 'Passenger'
       current_train.attach_wagons(CargoWagon.new) if current_train.type == 'Cargo'
     when 2
-      puts "Количеcтво вагонов поезда: #{current_train.wagons.length}"
-      puts "Введите номер удаляемого вагона: "
+      puts "Количеcтво вагонов поезда: #{current_train.wagons.length}\n
+            Введите номер удаляемого вагона: "
       wagon_index = gets.chomp.to_i
       current_train.unpin_wagons(wagon_index)
     when 3
@@ -136,20 +140,19 @@ loop do
 
   when 6
     current_train = train(trains_list, train_number, routes)
-    puts "Введите 1, чтобы переместить поезд вперед на одну станцию. \n
-          Введите 2, чтобы переместить поезд назад на одну станцию. \n
+    puts "Введите 1, чтобы переместить поезд вперед на одну станцию.\n
+          Введите 2, чтобы переместить поезд назад на одну станцию.\n
           Введите 3, чтобы вернуться обратно."
     moving = gets.chomp
     case moving
     when 1
       if current_train.moving_forward
-        current_train.route.stations[stations.index(current_train.current_station)].send_train(current_train)
-        current_train.route.stations[stations.index(current_train.current_station).next].add_train(current_train)
-      end
+        current_train.previous_station.send_train(current_train)
+        add_train_on_station(current_train)
     when 2
       if current_train.moving_back
-        current_train.route.stations[stations.index(current_train.current_station)].send_train(current_train)
-        current_train.route.stations[stations.index(current_train.current_station).pred].add_train(current_train)
+        current_train.next_station.send_train(current_train)
+        add_train_on_station(current_train)
       end
     when 3
       break
