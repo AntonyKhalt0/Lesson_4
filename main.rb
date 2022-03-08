@@ -25,6 +25,11 @@ def add_train_on_station(current_train)
   current_train.current_station.add_train(current_train)
 end
 
+def wagon_of(current_train)
+  PassengerWagon.new if current_train.type == "Passenger"
+  CargoWagon.new if current_train.type == "Cargo"
+end
+
 stations = [Station.new('Москва'), Station.new('Воронеж'), Station.new('Тула')] 
 test_route_first = Route.new(route_name(stations[0], stations[2]), stations[0], stations[2])
 test_route_second = Route.new(route_name(stations[2], stations[0]), stations[2], stations[0])
@@ -127,8 +132,7 @@ loop do
     select_action_with_wagon = gets.chomp.to_i
     case select_action_with_wagon
     when 1
-      current_train.attach_wagons(PassengerWagon.new) if current_train.type == 'Passenger'
-      current_train.attach_wagons(CargoWagon.new) if current_train.type == 'Cargo'
+      current_train.attach_wagons(wagon_of(current_train))
     when 2
       puts "Количеcтво вагонов поезда: #{current_train.wagons.length}\n
             Введите номер удаляемого вагона: "
