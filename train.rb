@@ -16,11 +16,11 @@ class Train
   end
 
   def attach_wagons(wagon)
-    @wagons.push(wagon) if cheking_speed_and_wagon_type?(wagon)
+    @wagons.push(wagon) if speed_zero? && wagon.type == self.type # Проверка происходит еще в основной программе, но пусть будет доп. проверка
   end
 
   def unpin_wagons(wagon_index)
-    @wagons.delete_at(wagon_index) if checking_speed_and_wagon_type?(wagon)
+    @wagons.delete_at(wagon_index) if speed_zero?
   end
 
   def train_route(route)
@@ -47,8 +47,8 @@ class Train
   protected # Private заменил на protected, чтобы заприваченные методы были видны в классах-потомках
   attr_writer :speed # Переместил setter скорости, чтобы нельзя было изменять "из вне"
 
-  def checking_speed_and_wagon_type?(wagon) # Методы дополнительного функционала вынес в protected
-    self.speed.zero? && wagon_type(wagon)
+  def speed_zero? # Методы дополнительного функционала вынес в protected
+    self.speed.zero? 
   end
 
   def route_stations 

@@ -8,10 +8,4 @@ class CargoTrain < Train
     @type = 'Cargo'
   end
 
-  private  # Заприватил т.к. метод дополнительного функционала
-
-  def wagon_type(wagon)
-    wagon.type == 'Cargo'
-  end
-
 end
